@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:tiktok_clone/constants.dart';
 import 'package:tiktok_clone/controllers/auth_controller.dart';
 import 'package:tiktok_clone/views/screens/auth/login_screen.dart';
@@ -111,12 +112,19 @@ class SignupScreen extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
-                authController.register(
-                  _usernameController.text,
-                  _passwordController.text,
-                  _emailController.text,
-                  authController.profilePhoto,
-                );
+                if (_usernameController.text.isNotEmpty &&
+                    _passwordController.text.isNotEmpty &&
+                    _emailController.text.isNotEmpty &&
+                    authController.profilePhoto != null) {
+                  authController.register(
+                    _usernameController.text,
+                    _passwordController.text,
+                    _emailController.text,
+                    authController.profilePhoto,
+                  );
+                } else {
+                  Get.snackbar('Error', 'Sorry all fields are required.');
+                }
               },
               child: Container(
                 width: MediaQuery.of(context).size.width - 40,
@@ -125,15 +133,21 @@ class SignupScreen extends StatelessWidget {
                   color: buttonColor,
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: const Center(
-                  child: Text(
-                    'Register',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
+                child: Obx(() {
+                  return Center(
+                    child: authController.isLoading.value
+                        ? const CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : const Text(
+                            'Register',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                  );
+                }),
               ),
             ),
             const SizedBox(

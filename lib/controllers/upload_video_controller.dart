@@ -83,6 +83,7 @@ import '../constants.dart';
 import '../models/video.dart';
 
 class UploadVideoController extends GetxController {
+  RxBool isLoading = false.obs;
   _compressVideo(String videoPath) async {
     final compressedVideo = await VideoCompress.compressVideo(
       videoPath,
@@ -115,6 +116,7 @@ class UploadVideoController extends GetxController {
 
   // upload video
   uploadVideo(String songName, String caption, String videoPath) async {
+    isLoading.value = true;
     try {
       String uid = firebaseAuth.currentUser!.uid;
       DocumentSnapshot userDoc =
@@ -149,5 +151,6 @@ class UploadVideoController extends GetxController {
         e.toString(),
       );
     }
+    isLoading.value = false;
   }
 }

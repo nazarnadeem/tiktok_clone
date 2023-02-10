@@ -7,6 +7,7 @@ import '../models/comment.dart';
 class CommentController extends GetxController {
   final Rx<List<Comment>> _comments = Rx<List<Comment>>([]);
   List<Comment> get comments => _comments.value;
+  RxBool isLoading = false.obs;
 
   String _postId = "";
   updatePostId(String id) {
@@ -34,50 +35,50 @@ class CommentController extends GetxController {
   }
 
   postComment(String commentText) async {
+    isLoading.value = true;
     try {
-      if (commentText.isNotEmpty) {
-        DocumentSnapshot documentSnapshot = await firebaseFirestore
-            .collection('users')
-            .doc(authController.user.uid)
-            .get();
-        var allComments = await firebaseFirestore
-            .collection('videos')
-            .doc(_postId)
-            .collection('comments')
-            .get();
+      DocumentSnapshot documentSnapshot = await firebaseFirestore
+          .collection('users')
+          .doc(authController.user.uid)
+          .get();
+      var allComments = await firebaseFirestore
+          .collection('videos')
+          .doc(_postId)
+          .collection('comments')
+          .get();
 
-        int length = allComments.docs.length;
+      int length = allComments.docs.length;
 
-        Comment comment = Comment(
-          username: (documentSnapshot.data()! as dynamic)['username'],
-          comment: commentText.trim(),
-          datePublished: DateTime.now(),
-          likes: [],
-          profilePhoto: (documentSnapshot.data()! as dynamic)['profilePhoto'],
-          uid: authController.user.uid,
-          id: 'Comment $length',
-        );
+      Comment comment = Comment(
+        username: (documentSnapshot.data()! as dynamic)['username'],
+        comment: commentText.trim(),
+        datePublished: DateTime.now(),
+        likes: [],
+        profilePhoto: (documentSnapshot.data()! as dynamic)['profilePhoto'],
+        uid: authController.user.uid,
+        id: 'Comment $length',
+      );
 
-        await firebaseFirestore
-            .collection('videos')
-            .doc(_postId)
-            .collection('comments')
-            .doc('Comment $length')
-            .set(
-              comment.toJson(),
-            );
-        DocumentSnapshot doc =
-            await firebaseFirestore.collection('videos').doc(_postId).get();
-        firebaseFirestore.collection('videos').doc(_postId).update({
-          'commentCount': (doc.data()! as dynamic)['commentCount'] + 1,
-        });
-      }
+      await firebaseFirestore
+          .collection('videos')
+          .doc(_postId)
+          .collection('comments')
+          .doc('Comment $length')
+          .set(
+            comment.toJson(),
+          );
+      DocumentSnapshot doc =
+          await firebaseFirestore.collection('videos').doc(_postId).get();
+      firebaseFirestore.collection('videos').doc(_postId).update({
+        'commentCount': (doc.data()! as dynamic)['commentCount'] + 1,
+      });
     } catch (e) {
       Get.snackbar(
         'Error while Commenting',
         e.toString(),
       );
     }
+    isLoading.value = false;
   }
 
   likeComment(String id) async {

@@ -200,7 +200,7 @@ class VideoScreen extends StatelessWidget {
                                     )
                                   ],
                                 ),
-                                Column(
+                                /*  Column(
                                   children: [
                                     InkWell(
                                       onTap: () {},
@@ -219,7 +219,7 @@ class VideoScreen extends StatelessWidget {
                                       ),
                                     )
                                   ],
-                                ),
+                                ),*/
                                 CircleAnimation(
                                   child: buildMusicAlbum(data.thumbnail),
                                 ),

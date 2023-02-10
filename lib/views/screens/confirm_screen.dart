@@ -95,19 +95,37 @@ class _ConfirmScreenState extends State<ConfirmScreen> {
                       const SizedBox(
                         height: 10,
                       ),
-                      ElevatedButton(
-                        onPressed: () {
-                          _uploadVideoController.uploadVideo(
-                              videoNameController.text,
-                              captionController.text,
-                              widget.videoPath);
-                        },
-                        child: const Text(
-                          "Share",
-                          style: TextStyle(
-                            fontSize: 20,
-                            color: Colors.white,
-                          ),
+                      SizedBox(
+                        width: 100,
+                        child: ElevatedButton(
+                          onPressed: () {
+                            if (videoNameController.text.isNotEmpty &&
+                                captionController.text.isNotEmpty &&
+                                widget.videoPath.isNotEmpty) {
+                              _uploadVideoController.uploadVideo(
+                                videoNameController.text,
+                                captionController.text,
+                                widget.videoPath,
+                              );
+                            } else {
+                              Get.snackbar("Error", 'All Fields are required.');
+                            }
+                          },
+                          child: Obx(() {
+                            return _uploadVideoController.isLoading.value
+                                ? const Center(
+                                    child: CircularProgressIndicator(
+                                      color: Colors.white,
+                                    ),
+                                  )
+                                : const Text(
+                                    "Share",
+                                    style: TextStyle(
+                                      fontSize: 20,
+                                      color: Colors.white,
+                                    ),
+                                  );
+                          }),
                         ),
                       )
                     ],

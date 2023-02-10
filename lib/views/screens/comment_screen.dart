@@ -43,7 +43,7 @@ class CommentScreen extends StatelessWidget {
                                     fontWeight: FontWeight.w700),
                               ),
                               SizedBox(
-                                width: size.width / 2,
+                                width: size.width / 2.5,
                                 child: Text(
                                   comment.comment,
                                   style: const TextStyle(
@@ -117,14 +117,30 @@ class CommentScreen extends StatelessWidget {
                     ),
                   ),
                 ),
-                trailing: TextButton(
-                  onPressed: () =>
-                      commentController.postComment(_commentController.text),
-                  child: const Text(
-                    'Send',
-                    style: TextStyle(fontSize: 16, color: Colors.white),
-                  ),
-                ),
+                trailing: Obx(() {
+                  return commentController.isLoading.value
+                      ? const CircularProgressIndicator(
+                          color: Colors.white,
+                        )
+                      : TextButton(
+                          onPressed: () {
+                            if (_commentController.text.isNotEmpty) {
+                              commentController
+                                  .postComment(_commentController.text);
+                            } else {
+                              Get.snackbar(
+                                'Error',
+                                'Comment field is required.',
+                              );
+                            }
+                            _commentController.clear();
+                          },
+                          child: const Text(
+                            'Send',
+                            style: TextStyle(fontSize: 16, color: Colors.white),
+                          ),
+                        );
+                }),
               ),
               const SizedBox(
                 height: 50,

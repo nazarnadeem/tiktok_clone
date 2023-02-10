@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:get/get.dart';
@@ -15,28 +14,30 @@ class AuthController extends GetxController {
   late Rx<User?> _user;
   File? get profilePhoto => _pickedImage.value;
   User get user => _user.value!;
+  RxBool isLoading = false.obs;
 
   @override
   onReady() {
     super.onReady();
-    _user = Rx<User?>(firebaseAuth!.currentUser);
+    _user = Rx<User?>(firebaseAuth.currentUser);
     _user.bindStream(firebaseAuth.authStateChanges());
     ever(_user, _setInitialScreen);
   }
 
   _setInitialScreen(User? user) {
+    isLoading.value = false;
     if (user == null) {
       Get.offAll(
         () => LoginScreen(),
       );
     } else {
       Get.offAll(
-        () => HomeScreen(),
+        () => const HomeScreen(),
       );
     }
   }
 
-  ///Pick Image
+  //Pick Image
   Future<void> pickImage() async {
     final pickedImage =
         await ImagePicker().pickImage(source: ImageSource.gallery);
@@ -56,19 +57,7 @@ class AuthController extends GetxController {
     }
   }
 
-  ///upload image to firebase storage
-  /*Future<String> _uploadToStorage(File image) async {
-    Reference reference = firebaseStorage
-        .ref()
-        .child('profilePics')
-        .child(firebaseAuth.currentUser!.uid);
-
-    UploadTask uploadTask = await reference.putFile(image);
-    TaskSnapshot snap = await uploadTask;
-    String downloadUrl = await snap.ref.getDownloadURL();
-    return downloadUrl;
-  }*/
-
+  //upload image to firebase storage
   Future<String> _uploadToStorage(File image) async {
     Reference ref = firebaseStorage
         .ref()
@@ -80,7 +69,7 @@ class AuthController extends GetxController {
     return downloadUrl;
   }
 
-  ///registering the user
+  //registering the user
   void register(
     String username,
     String password,
@@ -88,50 +77,41 @@ class AuthController extends GetxController {
     File? image,
   ) async {
     try {
-      if (username.isNotEmpty &&
-          password.isNotEmpty &&
-          email.isNotEmpty &&
-          image != null) {
-        /// Save our user to auth & firestore
-        UserCredential userCredential =
-            await firebaseAuth.createUserWithEmailAndPassword(
-          email: email,
-          password: password,
-        );
-        String downloadUrl = await _uploadToStorage(image);
-        model.User user = model.User(
-          username: username,
-          profilePhoto: downloadUrl,
-          email: email,
-          uid: firebaseAuth.currentUser!.uid,
-        );
-        firebaseFirestore.collection('users').doc(userCredential.user!.uid).set(
-              user.toJson(),
-            );
-      } else {
-        Get.snackbar(
-          'Error Creating Account',
-          'All fields are compulsory...',
-        );
-      }
+      isLoading.value = true;
+      // Save our user to auth & firestore
+      UserCredential userCredential =
+          await firebaseAuth.createUserWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+      String downloadUrl = await _uploadToStorage(image!);
+      model.User user = model.User(
+        username: username,
+        profilePhoto: downloadUrl,
+        email: email,
+        uid: firebaseAuth.currentUser!.uid,
+      );
+      firebaseFirestore.collection('users').doc(userCredential.user!.uid).set(
+            user.toJson(),
+          );
     } catch (e) {
-      print('e------->$e');
       Get.snackbar(
         'Error Creating Account',
         e.toString(),
       );
     }
+    isLoading.value = false;
   }
 
-  ///Login User
+  //Login User
 
   void loginUser(String email, String password) async {
+    isLoading.value = true;
     try {
-      if (email.isNotEmpty && password.isNotEmpty) {
-        await firebaseAuth.signInWithEmailAndPassword(
-            email: email, password: password);
-      }
+      await firebaseAuth.signInWithEmailAndPassword(
+          email: email, password: password);
     } catch (e) {
+      isLoading.value = false;
       Get.snackbar(
         'Error Logging In',
         e.toString(),

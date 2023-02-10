@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:tiktok_clone/constants.dart';
 import 'package:tiktok_clone/views/screens/auth/signup_screen.dart';
 import 'package:tiktok_clone/views/widgets/text_input_field.dart';
@@ -66,10 +67,18 @@ class LoginScreen extends StatelessWidget {
             ),
             InkWell(
               onTap: () {
-                authController.loginUser(
-                  _emailController.text,
-                  _passwordController.text,
-                );
+                if (_emailController.text.isNotEmpty &&
+                    _passwordController.text.isNotEmpty) {
+                  authController.loginUser(
+                    _emailController.text,
+                    _passwordController.text,
+                  );
+                } else {
+                  Get.snackbar(
+                    'Missing Fields',
+                    'Both fields are required.',
+                  );
+                }
               },
               child: Container(
                 width: MediaQuery.of(context).size.width - 40,
@@ -78,15 +87,21 @@ class LoginScreen extends StatelessWidget {
                   color: buttonColor,
                   borderRadius: BorderRadius.circular(5),
                 ),
-                child: const Center(
-                  child: Text(
-                    'Login',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ),
+                child: Obx(() {
+                  return Center(
+                    child: authController.isLoading.value
+                        ? const CircularProgressIndicator(
+                            color: Colors.white,
+                          )
+                        : const Text(
+                            'Login',
+                            style: TextStyle(
+                              fontSize: 20,
+                              fontWeight: FontWeight.w700,
+                            ),
+                          ),
+                  );
+                }),
               ),
             ),
             const SizedBox(

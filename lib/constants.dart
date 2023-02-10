@@ -8,28 +8,27 @@ import 'package:tiktok_clone/views/screens/video_screen.dart';
 import 'views/screens/add_video_screen.dart';
 import 'views/screens/profile_screen.dart';
 
-/// PAGES
+// PAGES
 List<Widget> pages = [
   VideoScreen(),
-  SearchScreen(),
   const AddVideoScreen(),
-  const Text('First4'),
+  SearchScreen(),
   ProfileScreen(
     uid: authController.user.uid,
   ),
 ];
 
-/// COLORS
+// COLORS
 const backgroundColor = Colors.black;
 var buttonColor = Colors.red[400];
 const borderColor = Colors.grey;
 
-/// Firebase
+// Firebase
 
 var firebaseAuth = FirebaseAuth.instance;
 var firebaseStorage = FirebaseStorage.instance;
 var firebaseFirestore = FirebaseFirestore.instance;
 
-/// Controllers
+// Controllers
 
 var authController = AuthController.instance;

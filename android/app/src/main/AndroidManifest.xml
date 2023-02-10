@@ -2,7 +2,7 @@
     package="com.nazarnadeem.tiktok">
     <uses-permission android:name="android.permission.INTERNET"/>
    <application
-        android:label="tiktok_clone"
+        android:label="Tiktok Clone"
        android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher"
        android:usesCleartextTraffic="true">
