@@ -1,16 +1,10 @@
 # tiktok_clone
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Hello viewer i hope you are doing great. I've made this tiktok clone app using Flutter and Firebase. Some important features of this app are:
+Login/Signup: Users can login & signup using firebase email authentication.
+Add Videos: Users can add videos either from gallery or camera.
+Like Videos: Users can like the video
+Comment: Users can post the comment on the videos and users can also like the comments.
+Search: Users can search users.
+Follow: Users can follow & unfollow each other and user can check his following and follwers count.
+Likes Count: User can check his total likes count got on all videos
